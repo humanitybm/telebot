@@ -1,22 +1,19 @@
 import telebot
 import requests
 
-API_KEY = "175ef938d8ecbc93ab5b2318392f5d95"
+API_KEY = "secret"
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
 from pybit.unified_trading import WebSocket
 from threading import Thread
 import time
 
-# Глобальный словарь для хранения текущих данных о тикерах
 crypto_data = {}
 
-# Функция для обработки сообщений WebSocket
 def handle_ticker_message(message):
     try:
-        # Проверяем, есть ли ключ 'data' в сообщении
         if "data" in message:
-            data = message["data"]  # Извлекаем данные
+            data = message["data"]  
             if "symbol" in data and "lastPrice" in data:
                 symbol = data["symbol"]
                 crypto_data[symbol] = {
@@ -32,32 +29,26 @@ def handle_ticker_message(message):
     except Exception as e:
         print(f"Error in WebSocket message handling: {e}")
 
-# Инициализация WebSocket
 def start_websocket():
     ws = WebSocket(
         testnet=True,
         channel_type="spot",
     )
-    symbols = ["BTCUSDT", "ETHUSDT", "TONUSDT"]  # Список отслеживаемых символов
+    symbols = ["BTCUSDT", "ETHUSDT", "TONUSDT"] 
     for symbol in symbols:
         ws.ticker_stream(
             symbol=symbol,
             callback=handle_ticker_message,
         )
 
-# Запускаем WebSocket в отдельном потоке
 ws_thread = Thread(target=start_websocket, daemon=True)
 ws_thread.start()
 
-# Обновлённая функция для получения тикера
 def get_crypto_ticker_ws(symbol):
     try:
-        # Проверяем наличие данных в словаре
         ticker = crypto_data.get(symbol)
         if not ticker:
             return f"❌ No data available for {symbol}. Please wait for updates. (Updates usually take a few seconds)"
-        
-        # Форматируем и возвращаем данные
         return (
             f"📊 {symbol} Ticker Info (Real-Time):\n"
             f"💰 Last Price: {ticker['last_price']} USDT\n"
