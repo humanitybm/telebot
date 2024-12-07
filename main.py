@@ -98,7 +98,7 @@ def get_weather(city):
 
 
 
-bot = telebot.TeleBot("7740359408:AAGCt0y5y0T4Fzrk7xRe9t6LlNwkh_7V_0E")
+bot = telebot.TeleBot("secret")
 
 @bot.message_handler(commands=['start'])
 def start(message):
